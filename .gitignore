@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# API Key - QUAN TRỌNG KHÔNG ĐƯỢC XÓA DÒNG NÀY
+.env
+*.env
+
+# FAISS Index
+rag/vector_store/*.index
+rag/vector_store/*.pkl
+
+# Data thô PDF lớn
+data/raw/
+
+# Frontend
+node_modules/
+frontend/build/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
