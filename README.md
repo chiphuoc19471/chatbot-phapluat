@@ -170,7 +170,7 @@ npm start
 
 ### Nhánh
 ```
-main          ← Production, chỉ merge khi hoàn thiện
+master          ← Production, chỉ merge khi hoàn thiện
 └── dev       ← Nhánh phát triển chung
     ├── feature/backend-auth
     ├── feature/backend-api
