@@ -218,9 +218,7 @@ test: thêm test
 ## ⚠️ Lưu ý quan trọng
 
 - **KHÔNG** commit file `.env` lên Git
-- **KHÔNG** push thẳng lên `main` hoặc `dev`
-- API Key chia sẻ riêng qua Zalo/Discord
-- Báo ngay cho nhóm khi bị stuck quá 1 ngày
+- **KHÔNG** push thẳng lên `master` 
 
 ---
 
