@@ -13,10 +13,10 @@ Hệ thống chatbot hỏi đáp pháp luật lao động, giúp người lao đ
 
 | Người | Vai trò | Phụ trách |
 |---|---|---|
-| A | Team Lead + Backend | FastAPI, Auth JWT, Database, API |
-| B | RAG Engineer | LangChain, FAISS, Embedding, RAG Pipeline |
-| C | Frontend Developer | React, Tailwind, Giao diện Chat |
-| D | Data + Evaluation | Thu thập luật, Chunking, RAGAS |
+| Nguyễn Tiến Lộc (A)| Backend | FastAPI, Auth JWT, Database, API |
+| Hoàng Chí Phước (B)| Team Lead + RAG Engineer | LangChain, FAISS, Embedding, RAG Pipeline |
+| Bùi Thái Học (C)| Frontend Developer | React, Tailwind, Giao diện Chat |
+| Nguyễn Trường Sơn (D)| Data + Evaluation | Thu thập luật, Chunking, RAGAS |
 
 ---
 
@@ -143,7 +143,6 @@ cp .env.example .env
 cd backend
 python -m venv venv
 venv\Scripts\activate        # Windows
-# source venv/bin/activate   # Mac/Linux
 pip install -r requirements.txt
 uvicorn main:app --reload
 # → Chạy tại: http://localhost:8000
@@ -208,11 +207,11 @@ test: thêm test
 
 | Tuần | Mục tiêu |
 |---|---|
-| 1–2 | Setup môi trường, Auth API, Mock API, Thu thập dữ liệu |
-| 3–4 | RAG Pipeline cơ bản, API chat/lịch sử, Màn hình Login |
-| 5–6 | Hoàn thiện Pipeline (reranking), Màn hình Chat, Chunking xong |
-| 7–8 | Tích hợp toàn bộ, kết nối API thật |
-| 9–10 | Kiểm thử RAGAS, Fix bug, Viết báo cáo |
+| 1 | Setup môi trường, Auth API, Mock API, Thu thập dữ liệu |
+| 1 | RAG Pipeline cơ bản, API chat/lịch sử, Màn hình Login |
+| 2 | Hoàn thiện Pipeline (reranking), Màn hình Chat, Chunking xong |
+| 2 | Tích hợp toàn bộ, kết nối API thật |
+| 3 | Kiểm thử RAGAS, Fix bug, Viết báo cáo |
 
 ---
 
@@ -225,6 +224,6 @@ test: thêm test
 
 ---
 
-## 📞 Liên hệ nhóm
+## 📞 Liên hệ trưởng nhóm
 
-> Cập nhật thông tin liên lạc của từng thành viên vào đây
+> Hoàng Chí Phước - chiphuoc1947@gmail.com
