@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <form id="registerForm" class="login-form">
+            <h2>Đăng ký</h2>
+            <div id="errorMessage" class="error-message hidden"></div>
+            <div class="form-group">
+                <label>Họ tên</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit">Đăng ký</button>
+            <p>Đã có tài khoản? <a href="index.html">Đăng nhập</a></p>
+        </form>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api-selector.js"></script>
+    <script>
+        window.addEventListener('api-ready', () => {
+            const form = document.getElementById('registerForm');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const pwdInput = document.getElementById('password');
+            const errorDiv = document.getElementById('errorMessage');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearError(errorDiv);
+                const btn = form.querySelector('button');
+                const original = btn.textContent;
+                showLoading(btn);
+                try {
+                    await window.register(emailInput.value.trim(), pwdInput.value, nameInput.value.trim());
+                    alert('Đăng ký thành công! Vui lòng đăng nhập.');
+                    window.location.href = 'index.html';
+                } catch (err) {
+                    displayError(errorDiv, err.data?.detail || err.message);
+                } finally {
+                    hideLoading(btn, original);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
