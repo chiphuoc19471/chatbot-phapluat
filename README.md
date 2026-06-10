@@ -54,7 +54,6 @@ Hệ thống chatbot hỏi đáp pháp luật lao động, giúp người lao đ
 | Vector DB | FAISS |
 | RAG Framework | LangChain |
 | Database | SQLite |
-| Xác thực | JWT + bcrypt |
 
 ---
 
