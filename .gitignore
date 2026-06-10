@@ -12,8 +12,7 @@ venv/
 rag/vector_store/*.index
 rag/vector_store/*.pkl
 
-# Data thô PDF lớn
-data/raw/
+
 
 # Frontend
 node_modules/
