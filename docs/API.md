@@ -1,7 +1,7 @@
 # 📡 API Documentation
 > Chatbot Tư Vấn Pháp Luật Lao Động
 
-**Base URL:** `http://localhost:8000`  
+**Base URL:** `http://localhost:8001`  
 **Format:** JSON  
 **Auth:** Bearer JWT Token (trừ các API đăng ký/đăng nhập)
 
@@ -223,7 +223,7 @@ Authorization: Bearer <token>
 ## 🔧 Cách Frontend gọi API (api.js)
 
 ```javascript
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "http://localhost:8001";
 
 // Lấy token từ localStorage
 const getToken = () => localStorage.getItem("access_token");

@@ -36,5 +36,5 @@ function isAuthenticated() {
 function logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user');
-    window.location.href = '/'; // về login
+    window.location.href = 'index.html'; // về login
 }

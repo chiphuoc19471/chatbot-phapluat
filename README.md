@@ -145,8 +145,8 @@ python -m venv venv
 venv\Scripts\activate        # Windows
 pip install -r requirements.txt
 uvicorn main:app --reload
-# → Chạy tại: http://localhost:8000
-# → Swagger docs: http://localhost:8000/docs
+# → Chạy tại: http://localhost:8001
+# → Swagger docs: http://localhost:8001/docs
 ```
 
 ### 4. Build FAISS Index (chạy 1 lần)

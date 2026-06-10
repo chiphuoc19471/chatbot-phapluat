@@ -4,7 +4,7 @@ let currentMessages = [];
 
 window.addEventListener('api-ready', async () => {
     if (!isAuthenticated()) {
-        window.location.href = '/';
+        window.location.href = 'index.html';
         return;
     }
     await loadHistory();

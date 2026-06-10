@@ -17,8 +17,8 @@ async function request(endpoint, method = 'GET', body = null, needAuth = true) {
     const response = await fetch(`${CONFIG.BASE_URL}${endpoint}`, options);
     const data = await response.json();
     if (!response.ok) {
-        // FIX 1: Token hết hạn → tự động đăng xuất, không để user kẹt
-        if (response.status === 401) {
+        // FIX 1: Token hết hạn → tự động đăng xuất, không để user kẹt (trừ khi ở endpoint đăng nhập)
+        if (response.status === 401 && endpoint !== '/auth/login') {
             logout();
             return;
         }
