@@ -54,7 +54,7 @@ def main():
     )
     
     # Tạo vector store bằng Chroma
-    output_dir = os.path.join(base_dir, "..", "rag", "chroma_db")
+    output_dir = os.path.join(base_dir, "..", "rag", "vector_store")
     os.makedirs(output_dir, exist_ok=True)
     
     print("Đang khởi tạo Chroma DB. Quá trình này sẽ nhanh hơn nhiều và không bị giới hạn gắt gao...")
