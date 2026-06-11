@@ -1,0 +1,22 @@
+[
+  {
+    "question": "Lao động nữ sinh con được nghỉ thai sản bao nhiêu tháng?",
+    "ground_truth": "Theo khoản 1 Điều 139 Bộ luật Lao động 2019, lao động nữ được nghỉ thai sản trước và sau khi sinh con là 06 tháng."
+  },
+  {
+    "question": "Người lao động làm thêm giờ vào ban đêm ngày lễ được trả lương như thế nào?",
+    "ground_truth": "Được trả ít nhất 300% lương ngày lễ, cộng thêm 30% lương làm đêm, cộng thêm 20% tiền lương tính theo đơn giá tiền lương hoặc tiền lương thực trả theo công việc làm vào ban ngày của ngày làm việc bình thường hoặc của ngày nghỉ hằng tuần hoặc của ngày nghỉ lễ, tết."
+  },
+  {
+    "question": "Thử việc tối đa bao nhiêu ngày đối với công việc có chức danh nghề nghiệp cần trình độ chuyên môn, kỹ thuật từ cao đẳng trở lên?",
+    "ground_truth": "Không quá 60 ngày đối với công việc có chức danh nghề nghiệp cần trình độ chuyên môn, kỹ thuật từ cao đẳng trở lên theo Điều 27 Bộ luật Lao động 2019."
+  },
+  {
+    "question": "Bao nhiêu tuổi thì được coi là người lao động cao tuổi?",
+    "ground_truth": "Người lao động cao tuổi là người tiếp tục lao động sau độ tuổi nghỉ hưu theo quy định tại khoản 2 Điều 169 của Bộ luật Lao động."
+  },
+  {
+    "question": "Người lao động đơn phương chấm dứt hợp đồng lao động không xác định thời hạn phải báo trước bao nhiêu ngày?",
+    "ground_truth": "Phải báo trước ít nhất 45 ngày theo quy định tại điểm a khoản 1 Điều 35 Bộ luật Lao động 2019."
+  }
+]
