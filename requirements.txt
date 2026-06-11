@@ -1,0 +1,16 @@
+# Backend
+fastapi==0.111.0
+uvicorn==0.30.0
+sqlalchemy==2.0.30
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.9
+pydantic==2.7.0
+
+# RAG
+langchain==0.2.0
+langchain-openai==0.1.7
+langchain-community==0.2.0
+langchain-chroma==0.1.2
+openai==1.30.0
+python-dotenv==1.0.1
