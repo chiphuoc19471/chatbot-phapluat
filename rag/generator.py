@@ -1,7 +1,4 @@
-"""
-Generator: sinh câu trả lời từ các Điều luật đã rerank,
-trả về answer + sources theo interface đã thống nhất với Backend.
-"""
+
 import re
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -176,9 +173,6 @@ def generate(query: str, reranked_parents: list[dict]) -> dict:
     
     answer_text = response.content.strip()
     
-    # --- CHỈ CẦN XÓA THẺ XANH Ở ĐÂY ---
-    # Nếu câu trả lời của AI không chứa các từ khóa liên quan đến luật,
-    # ta trả về sources là mảng rỗng []. Frontend nhận [] sẽ tự động ẩn thẻ xanh.
     keywords = ["Điều", "Khoản", "Luật", "Bộ luật", "Nghị định", "Thông tư"]
     is_legal_answer = any(kw in answer_text for kw in keywords)
     

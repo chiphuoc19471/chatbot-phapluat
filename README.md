@@ -1,5 +1,6 @@
 # 🤖 Chatbot Tư Vấn Pháp Luật Lao Động
 > Ứng dụng kỹ thuật RAG (Retrieval-Augmented Generation) và Mô hình Ngôn ngữ Lớn (LLM)
+<img width="2493" height="1375" alt="image" src="https://github.com/user-attachments/assets/dc41c2b2-cd01-47ef-bab8-e4bffe78f95e" />
 
 ---
 
@@ -54,7 +55,7 @@ Hệ thống chatbot hỏi đáp pháp luật lao động, giúp người lao đ
 
 | Thành phần | Công nghệ |
 |---|---|
-| Frontend | React + Tailwind CSS |
+| Frontend | HTML + CSS + JavaScript (thuần) |
 | Backend | FastAPI (Python 3.10+) |
 | LLM | GPT-4.1-mini (OpenAI) |
 | Embedding | `OpenAI text-embedding-3-small` |
@@ -69,7 +70,7 @@ Hệ thống chatbot hỏi đáp pháp luật lao động, giúp người lao đ
 
 ---
 
-## 📡 Interface RAG Pipeline (hợp đồng giữa Backend ↔ RAG)
+## 📡 Interface RAG Pipeline
 
 Backend (A) gọi pipeline của RAG (B) qua **một hàm duy nhất** `rag.pipeline.answer()`:
 
@@ -142,18 +143,11 @@ chatbot-phapluat/
 │       └── ragas_eval.py
 │
 ├── frontend/                 # Người C phụ trách
-│   ├── src/
-│   │   ├── pages/
-│   │   │   ├── Login.jsx
-│   │   │   ├── Register.jsx
-│   │   │   └── Chat.jsx
-│   │   ├── components/
-│   │   │   ├── ChatBox.jsx
-│   │   │   ├── Sidebar.jsx
-│   │   │   └── Message.jsx
-│   │   └── services/
-│   │       └── api.js
-│   └── package.json
+│   ├── css/
+│   ├── js/
+│   ├── index.html            # Trang đăng nhập
+│   ├── register.html         # Trang đăng ký
+│   └── chat.html             # Giao diện chat chính
 │
 ├── docs/
 │   ├── API.md
@@ -181,7 +175,6 @@ chatbot-phapluat/
 
 ### Yêu cầu
 - Python 3.10+
-- Node.js 18+
 - OpenAI API Key
 
 ### 1. Clone repo
@@ -202,53 +195,23 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Nội dung `requirements.txt`:
-```txt
-# --- Backend ---
-fastapi
-uvicorn[standard]
-sqlalchemy
-python-jose[cryptography]
-passlib[bcrypt]
-python-multipart
-
-# --- RAG ---
-langchain
-langchain-openai
-langchain-chroma
-langchain-community
-chromadb
-openai
-python-dotenv
-
-# --- Data & Evaluation ---
-pymupdf4llm
-ragas
-datasets
-```
 
 > Khi cài thêm thư viện mới: `pip install <tên>` xong phải cập nhật vào `requirements.txt` rồi mới commit.
 
 ### 3. Cấu hình biến môi trường
 ```bash
-# Copy file mẫu rồi điền giá trị thật
-cp .env.example .env        # macOS / Linux
-copy .env.example .env      # Windows
+# Tạo file .env rồi điền giá trị thật vào
 ```
 
 Nội dung `.env.example`:
 ```env
-# OpenAI
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY= 
 
-# Model
-LLM_MODEL=gpt-4.1-mini
+SECRET_KEY=your-jwt-secret-key-here
+DATABASE_URL=sqlite:///./chatbot.db
 EMBEDDING_MODEL=text-embedding-3-small
+LLM_MODEL=gpt-4.1-mini
 
-# Auth (Backend)
-JWT_SECRET_KEY=thay-bang-chuoi-ngau-nhien
-JWT_ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=60
 ```
 
 Các tham số kỹ thuật của pipeline đặt trong `rag/config.py`:
@@ -276,12 +239,8 @@ uvicorn main:app --reload --port 8001
 ```
 
 ### 6. Chạy Frontend
-```bash
-cd frontend
-npm install
-npm start
-# → Chạy tại: http://localhost:3000
-```
+
+Dùng Live Server (VS Code extension) để tránh lỗi CORS khi gọi API.
 
 ---
 
