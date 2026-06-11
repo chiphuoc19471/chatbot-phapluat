@@ -1,9 +1,9 @@
 // js/api-selector.js
 (async function() {
     if (CONFIG.USE_MOCK) {
-        await loadScript('js/mockApi.js');
+        await loadScript('js/mockApi.js?v=3');
     } else {
-        await loadScript('js/api.js');
+        await loadScript('js/api.js?v=3');
     }
     // Sau khi load xong, các hàm (login, sendMessage, ...) đã có trên window
     window.apiReady = true;

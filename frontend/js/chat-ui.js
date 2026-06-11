@@ -169,7 +169,7 @@ function createMessageRow(msg) {
         msg.sources.forEach(s => {
             const tag = document.createElement('span');
             tag.className = 'source-tag';
-            tag.innerHTML = `📚 ${escapeHtml(s.law)} ${escapeHtml(s.article)}`;
+            tag.innerHTML = `📚 ${escapeHtml(s.van_ban || s.law || '')} · ${escapeHtml(s.dieu || s.article || '')}`;
             sourcesDiv.appendChild(tag);
         });
         bubble.appendChild(sourcesDiv);
@@ -290,72 +290,60 @@ async function sendMessageHandler() {
     input.value = '';
     input.style.height = 'auto';
 
-    // Hide empty state
     const emptyEl = document.getElementById('emptyChat');
     if (emptyEl) emptyEl.style.display = 'none';
 
-    // Add user message
-    const tempUserMsg = {
-        id: Date.now(),
+    const container = document.getElementById('messagesContainer');
+
+    // Hiển thị tin nhắn người dùng
+    const userMsg = {
+        id: 'tmp-' + Date.now(),
         role: 'user',
         content: question,
         sources: null,
         created_at: new Date().toISOString()
     };
-    currentMessages.push(tempUserMsg);
-
-    const container = document.getElementById('messagesContainer');
-
-    // Append user message
-    const userRow = createMessageRow(tempUserMsg);
-    container.appendChild(userRow);
+    currentMessages.push(userMsg);
+    container.appendChild(createMessageRow(userMsg));
     container.scrollTop = container.scrollHeight;
 
-    // Add typing indicator
-    const typingMsg = { id: 'typing', role: 'assistant', content: '', _isTyping: true };
-    const typingRow = createMessageRow(typingMsg);
+    // Hiện typing indicator
+    const typingRow = createMessageRow({ role: 'assistant', content: '', _isTyping: true });
+    typingRow.id = 'typingRow';
     container.appendChild(typingRow);
     container.scrollTop = container.scrollHeight;
 
     try {
-        const response = await window.sendMessage(question, currentConversationId);
+        const result = await window.sendMessage(question, currentConversationId);
 
-        // Remove typing row
-        const existingTyping = document.getElementById('typingRow');
-        if (existingTyping) existingTyping.remove();
+        document.getElementById('typingRow')?.remove();
+
+        if (!currentConversationId) currentConversationId = result.conversation_id;
 
         const assistantMsg = {
-            id: response.message_id,
+            id: result.message_id,
             role: 'assistant',
-            content: response.answer,
-            sources: response.sources,
+            content: result.answer,
+            sources: result.sources || [],
             created_at: new Date().toISOString()
         };
         currentMessages.push(assistantMsg);
-
-        if (!currentConversationId) {
-            currentConversationId = response.conversation_id;
-        }
-
-        const assistantRow = createMessageRow(assistantMsg);
-        container.appendChild(assistantRow);
+        container.appendChild(createMessageRow(assistantMsg));
         container.scrollTop = container.scrollHeight;
 
         await loadHistory();
 
     } catch (err) {
-        const existingTyping = document.getElementById('typingRow');
-        if (existingTyping) existingTyping.remove();
-
-        const errorMsg = {
+        document.getElementById('typingRow')?.remove();
+        const errMsg = {
             id: Date.now(),
             role: 'assistant',
-            content: `⚠️ Lỗi: ${err.message || 'Không thể gửi câu hỏi. Vui lòng thử lại.'}`,
+            content: `⚠️ Lỗi: ${err.message || 'Không thể gửi tin nhắn. Vui lòng thử lại.'}`,
             sources: null,
             created_at: new Date().toISOString()
         };
-        currentMessages.push(errorMsg);
-        container.appendChild(createMessageRow(errorMsg));
+        currentMessages.push(errMsg);
+        container.appendChild(createMessageRow(errMsg));
         container.scrollTop = container.scrollHeight;
     } finally {
         input.disabled = false;

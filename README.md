@@ -14,7 +14,7 @@ Hệ thống chatbot hỏi đáp pháp luật lao động, giúp người lao đ
 | Người | Vai trò | Phụ trách |
 |---|---|---|
 | Nguyễn Tiến Lộc (A)| Backend | FastAPI, Auth JWT, Database, API |
-| Hoàng Chí Phước (B)| Team Lead + RAG Engineer | LangChain, FAISS, Embedding, RAG Pipeline |
+| Hoàng Chí Phước (B)| Team Lead + RAG Engineer | LangChain, Chroma, Embedding, RAG Pipeline |
 | Bùi Thái Học (C)| Frontend Developer | React, Tailwind, Giao diện Chat |
 | Nguyễn Trường Sơn (D)| Data + Evaluation | Thu thập luật, Chunking, RAGAS |
 
@@ -33,12 +33,19 @@ Hệ thống chatbot hỏi đáp pháp luật lao động, giúp người lao đ
 │         Auth JWT │ Chat API │ History API            │
 └───────┬──────────────────────────┬──────────────────┘
         │                          │
-┌───────▼──────────┐    ┌──────────▼──────────────────┐
-│  RAG Pipeline    │    │     Database (SQLite)        │
-│  LangChain       │    │  users, conversations,       │
-│  FAISS + bge-m3  │    │  messages                    │
-│  GPT-4o Mini     │    └─────────────────────────────-┘
-└──────────────────┘
+┌───────▼──────────────────────────┐    ┌──────────▼──────────────────┐
+│  RAG Pipeline (LangChain)        │    │     Database (SQLite)        │
+│  1. Query Rewriting              │    │  users, conversations,       │
+│     (lịch sử hội thoại phiên)    │    │  messages                    │
+│  2. Parent Document Retrieval    │    └─────────────────────────────┘
+│     - Chunk con  → Chroma        │
+│       (text-embedding-3-small)   │
+│     - Chunk cha (toàn văn Điều)  │
+│       → Docstore (file JSON)     │
+│  3. LLM Reranker (post-retrieval)│
+│  4. Generator: GPT-4.1-mini      │
+│     (trả lời + trích dẫn Điều)   │
+└──────────────────────────────────┘
 ```
 
 ---
@@ -49,11 +56,50 @@ Hệ thống chatbot hỏi đáp pháp luật lao động, giúp người lao đ
 |---|---|
 | Frontend | React + Tailwind CSS |
 | Backend | FastAPI (Python 3.10+) |
-| LLM | GPT-4o Mini (OpenAI) |
-| Embedding | `BAAI/bge-m3` |
-| Vector DB | FAISS |
+| LLM | GPT-4.1-mini (OpenAI) |
+| Embedding | `OpenAI text-embedding-3-small` |
+| Vector DB (chunk con) | Chroma |
+| Docstore (chunk cha) | File JSON (`rag/docstore/parents.json`) |
 | RAG Framework | LangChain |
+| Query Rewriting | LangChain (tích hợp lịch sử hội thoại phiên) |
+| Retrieval | Parent Document Retrieval (cha-con theo điều khoản luật) |
+| Reranker | LLM Reranker (post-retrieval, dùng GPT-4.1-mini) |
 | Database | SQLite |
+| Cấu hình tham số RAG | `rag/config.py` + biến môi trường `.env` |
+
+---
+
+## 📡 Interface RAG Pipeline (hợp đồng giữa Backend ↔ RAG)
+
+Backend (A) gọi pipeline của RAG (B) qua **một hàm duy nhất** `rag.pipeline.answer()`:
+
+**Input:**
+```json
+{
+  "query": "Nghỉ thai sản được bao nhiêu tháng?",
+  "chat_history": [
+    {"role": "user", "content": "..."},
+    {"role": "assistant", "content": "..."}
+  ]
+}
+```
+- `chat_history`: tối đa **5 lượt gần nhất** của phiên hiện tại, Backend truy xuất từ SQLite và truyền vào. Pipeline dùng để Query Rewriting, **không** tự đọc database.
+
+**Output:**
+```json
+{
+  "answer": "Theo Điều 139 Bộ luật Lao động 2019, lao động nữ được nghỉ thai sản 6 tháng...",
+  "sources": [
+    {
+      "dieu": "Điều 139",
+      "ten_dieu": "Nghỉ thai sản",
+      "van_ban": "Bộ luật Lao động 2019",
+      "trich_doan": "Lao động nữ được nghỉ thai sản trước và sau khi sinh con là 06 tháng..."
+    }
+  ]
+}
+```
+- `sources` để Frontend hiển thị trích dẫn điều luật và để RAGAS lấy `contexts` khi đánh giá.
 
 ---
 
@@ -71,24 +117,26 @@ chatbot-phapluat/
 │   │   ├── user.py
 │   │   └── conversation.py
 │   ├── database.py
-│   ├── auth.py
-│   └── requirements.txt
+│   └── auth.py
 │
 ├── rag/                      # Người B phụ trách
-│   ├── pipeline.py
-│   ├── embedder.py
-│   ├── retriever.py
-│   ├── generator.py
-│   ├── rewriter.py
-│   └── vector_store/
+│   ├── config.py             # Tham số: chunk size, top_k, top_n, model name...
+│   ├── pipeline.py           # Hàm answer() - entry point cho Backend gọi
+│   ├── embedder.py           # Khởi tạo embedding model (dùng chung cho build & query)
+│   ├── retriever.py          # Parent Document Retrieval
+│   ├── reranker.py           # LLM Reranker
+│   ├── generator.py          # Sinh câu trả lời + trích dẫn
+│   ├── rewriter.py           # Query Rewriting từ lịch sử hội thoại
+│   ├── build_index.py        # Build Chroma index + docstore từ data/chunks/
+│   ├── vector_store/         # Chroma index (chunk con) - KHÔNG commit lên Git
+│   └── docstore/             # parents.json (chunk cha)  - KHÔNG commit lên Git
 │
 ├── data/                     # Người D phụ trách
-│   ├── raw/
-│   ├── processed/
-│   ├── chunks/
+│   ├── raw/                  # PDF văn bản luật gốc
+│   ├── processed/            # Markdown đã làm sạch
+│   ├── chunks/               # chunks.json chuẩn hóa theo Điều/Khoản/Điểm
 │   ├── parse_pdf.py
 │   ├── chunking.py
-│   ├── build_index.py
 │   └── evaluation/
 │       ├── test_questions.json
 │       └── ragas_eval.py
@@ -111,13 +159,25 @@ chatbot-phapluat/
 │   ├── API.md
 │   └── setup.md
 │
+├── requirements.txt          # Dependencies Python dùng chung (backend + rag + data)
+├── .env.example              # Mẫu biến môi trường (copy thành .env)
 ├── .gitignore
 └── README.md
 ```
 
+### 🔀 Quy ước phối hợp B ↔ D (khâu dữ liệu → index)
+
+| Bước | Ai làm | Output |
+|---|---|---|
+| Parse PDF → Markdown | D (`data/parse_pdf.py`) | `data/processed/` |
+| Chunking theo Điều/Khoản/Điểm | D (`data/chunking.py`) | `data/chunks/chunks.json` |
+| Embedding + Build index | B (`rag/build_index.py`, dùng `rag/embedder.py`) | `rag/vector_store/` + `rag/docstore/` |
+
+> Format `chunks.json` do B và D thống nhất, mô tả chi tiết trong `docs/setup.md`. Chỉ có **một** bộ code embedding duy nhất nằm trong `rag/embedder.py` — D không tự viết embedding riêng.
+
 ---
 
-## 🚀 Hướng dẫn cài đặt & chạy
+## ⚙️ Setup môi trường
 
 ### Yêu cầu
 - Python 3.10+
@@ -130,32 +190,92 @@ git clone https://github.com/your-org/chatbot-phapluat.git
 cd chatbot-phapluat
 ```
 
-### 2. Tạo file .env
+### 2. Tạo virtual environment & cài dependencies (1 venv duy nhất ở thư mục gốc)
 ```bash
-# Tạo file .env trong thư mục gốc
-cp .env.example .env
-# Điền API key vào file .env
+python -m venv venv
+
+# Windows (PowerShell)
+venv\Scripts\activate
+# macOS / Linux
+source venv/bin/activate
+
+pip install -r requirements.txt
 ```
 
-### 3. Chạy Backend
+Nội dung `requirements.txt`:
+```txt
+# --- Backend ---
+fastapi
+uvicorn[standard]
+sqlalchemy
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+
+# --- RAG ---
+langchain
+langchain-openai
+langchain-chroma
+langchain-community
+chromadb
+openai
+python-dotenv
+
+# --- Data & Evaluation ---
+pymupdf4llm
+ragas
+datasets
+```
+
+> Khi cài thêm thư viện mới: `pip install <tên>` xong phải cập nhật vào `requirements.txt` rồi mới commit.
+
+### 3. Cấu hình biến môi trường
+```bash
+# Copy file mẫu rồi điền giá trị thật
+cp .env.example .env        # macOS / Linux
+copy .env.example .env      # Windows
+```
+
+Nội dung `.env.example`:
+```env
+# OpenAI
+OPENAI_API_KEY=sk-...
+
+# Model
+LLM_MODEL=gpt-4.1-mini
+EMBEDDING_MODEL=text-embedding-3-small
+
+# Auth (Backend)
+JWT_SECRET_KEY=thay-bang-chuoi-ngau-nhien
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=60
+```
+
+Các tham số kỹ thuật của pipeline đặt trong `rag/config.py`:
+```python
+CHILD_CHUNK_SIZE = 500        # tokens, chunk con theo Khoản/Điểm
+TOP_K_RETRIEVE = 10           # số chunk lấy từ Chroma
+TOP_N_RERANK = 4              # số chunk giữ lại sau LLM Reranker
+MAX_HISTORY_TURNS = 5         # số lượt hội thoại dùng cho Query Rewriting
+RERANKER_MODEL = "gpt-4.1-mini"
+```
+
+### 4. Build Chroma Index + Docstore (chạy 1 lần, hoặc khi dữ liệu thay đổi)
+```bash
+python -m rag.build_index
+# → Tạo Chroma index tại rag/vector_store/
+# → Tạo docstore chunk cha tại rag/docstore/parents.json
+```
+
+### 5. Chạy Backend
 ```bash
 cd backend
-python -m venv venv
-venv\Scripts\activate        # Windows
-pip install -r requirements.txt
-uvicorn main:app --reload
+uvicorn main:app --reload --port 8001
 # → Chạy tại: http://localhost:8001
 # → Swagger docs: http://localhost:8001/docs
 ```
 
-### 4. Build FAISS Index (chạy 1 lần)
-```bash
-cd data
-python build_index.py
-# → Tạo file index tại rag/vector_store/
-```
-
-### 5. Chạy Frontend
+### 6. Chạy Frontend
 ```bash
 cd frontend
 npm install
@@ -217,7 +337,8 @@ test: thêm test
 ## ⚠️ Lưu ý quan trọng
 
 - **KHÔNG** commit file `.env` lên Git
-- **KHÔNG** push thẳng lên `master` 
+- **KHÔNG** commit `rag/vector_store/` và `rag/docstore/` lên Git (đã thêm vào `.gitignore`, build lại bằng `python -m rag.build_index`)
+- **KHÔNG** push thẳng lên `master`
 
 ---
 
