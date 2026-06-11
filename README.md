@@ -200,24 +200,18 @@ pip install -r requirements.txt
 
 ### 3. Cấu hình biến môi trường
 ```bash
-# Copy file mẫu rồi điền giá trị thật
-cp .env.example .env        # macOS / Linux
-copy .env.example .env      # Windows
+# Tạo file .env rồi điền giá trị thật vào
 ```
 
 Nội dung `.env.example`:
 ```env
-# OpenAI
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY= 
 
-# Model
-LLM_MODEL=gpt-4.1-mini
+SECRET_KEY=your-jwt-secret-key-here
+DATABASE_URL=sqlite:///./chatbot.db
 EMBEDDING_MODEL=text-embedding-3-small
+LLM_MODEL=gpt-4.1-mini
 
-# Auth (Backend)
-JWT_SECRET_KEY=thay-bang-chuoi-ngau-nhien
-JWT_ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=60
 ```
 
 Các tham số kỹ thuật của pipeline đặt trong `rag/config.py`:
