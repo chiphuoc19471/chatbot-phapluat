@@ -41,7 +41,42 @@ async function login(email, password) {
     return data;
 }
 
-// Chat
+// Chat - streaming version
+async function* sendMessageStream(question, conversationId = null) {
+    const token = getToken();
+    if (!token) throw new Error('Chưa đăng nhập');
+    const body = { question };
+    if (conversationId) body.conversation_id = conversationId;
+
+    const response = await fetch(`${CONFIG.BASE_URL}/chat/stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+        if (response.status === 401) { logout(); return; }
+        throw new Error('Lỗi kết nối');
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+            if (line.startsWith('data: ')) {
+                try { yield JSON.parse(line.slice(6)); } catch (_) {}
+            }
+        }
+    }
+}
+
+// Chat - non-streaming (fallback)
 async function sendMessage(question, conversationId = null) {
     // FIX 2: Không gửi conversation_id: null lên backend
     // FastAPI/Pydantic có thể báo lỗi validation nếu nhận null thay vì bỏ trống field

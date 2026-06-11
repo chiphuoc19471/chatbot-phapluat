@@ -3,12 +3,13 @@ __pycache__/
 *.pyc
 venv/
 .venv/
+ragphapluat/
 
 # API Key - QUAN TRỌNG KHÔNG ĐƯỢC XÓA DÒNG NÀY
 .env
 *.env
 
-# FAISS Index
+
 rag/vector_store/*.index
 rag/vector_store/*.pkl
 
