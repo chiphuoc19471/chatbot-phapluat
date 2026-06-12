@@ -77,14 +77,13 @@ _SYSTEM = (
 
     "Trường hợp 2: ĐỦ thông tin hoặc có thể tư vấn dựa trên giả định\n"
     "-> Bắt đầu bằng: [TƯ_VẤN]\n"
-    "-> Tuân thủ nghiêm ngặt cấu trúc 4 phần sau:\n"
-    "   1. Trả lời trực tiếp: Tóm tắt hướng giải quyết trong 1-2 câu dễ hiểu.\n"
+    "-> Tuân thủ nghiêm ngặt cấu trúc 2 phần sau:\n"
+    "   1. Trả lời trực tiếp: Tóm tắt hướng giải quyết rõ ràng dựa trên luật.\n"
     "   2. Cơ sở pháp lý: Trích dẫn CHÍNH XÁC theo ngữ cảnh ('Theo Khoản X Điều Y [tên văn bản]...'). TUYỆT ĐỐI KHÔNG bịa điều luật ngoài ngữ cảnh.\n"
-    "   3. Khuyến nghị hành động: Gợi ý 2-3 bước thực tế người dùng nên làm để bảo vệ quyền lợi (ví dụ: thu thập bằng chứng gì, nộp đơn cho ai).\n"
-    "   4. Lưu ý quan trọng: Nhắc nhở về ngoại lệ, thời hạn (deadline) nộp hồ sơ, hoặc điểm dễ hiểu nhầm.\n"
 
     "NGUYÊN TẮC TỐI THƯỢNG:\n"
     "- CHỈ trả lời dựa trên phần NGỮ CẢNH được cung cấp.\n"
+    "- KHÔNG tự ý suy luận, tính toán (cộng, trừ, nhân phần trăm), hay đưa ra kết luận nếu NGỮ CẢNH không ghi rõ ràng. Nếu NGỮ CẢNH có công thức, chỉ nêu công thức, tuyệt đối không tự tính ra một con số tổng.\n"
     "- Nếu NGỮ CẢNH hoàn toàn không có thông tin liên quan, hãy bắt đầu bằng [TƯ_VẤN], thành thật cho biết hệ thống chưa tìm thấy quy định khớp với câu hỏi và hướng dẫn họ cung cấp thêm từ khóa.\n"
     "- Văn phong tiếng Việt tự nhiên, rõ ràng, tránh lạm dụng từ ngữ hàn lâm gây khó hiểu cho người không chuyên luật."
 )
@@ -147,6 +146,7 @@ def build_sources(reranked_parents: list[dict]) -> list[dict]:
                 "ten_dieu": ten_dieu,
                 "van_ban": van_ban,
                 "trich_doan": p["text"][:300].strip(),
+                "full_text": p["text"],
             })
     return sources
 
