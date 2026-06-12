@@ -42,8 +42,8 @@ def chunk_markdown_files(processed_dir='processed', chunk_dir='chunks'):
     # 2. Khởi tạo cấu hình cho Giai đoạn 2: Fallback Chunking (xử lý Điều quá dài)
     # Cố gắng không cắt giữa bảng (dấu |) hoặc giữa câu.
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=150,
+        chunk_size=2000,
+        chunk_overlap=300,
         separators=["\n\n", "\n", ".", "?", "!", " ", ""],
         length_function=len,
     )
