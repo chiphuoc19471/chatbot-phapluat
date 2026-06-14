@@ -16,7 +16,7 @@ Hệ thống chatbot hỏi đáp pháp luật lao động, giúp người lao đ
 |---|---|---|
 | Nguyễn Tiến Lộc (A)| Backend | FastAPI, Auth JWT, Database, API |
 | Hoàng Chí Phước (B)| Team Lead + RAG Engineer | LangChain, Chroma, Embedding, RAG Pipeline |
-| Bùi Thái Học (C)| Frontend Developer | React, Tailwind, Giao diện Chat |
+| Bùi Thái Học (C)| Frontend Developer | HTML + CSS + JavaScript (thuần) |
 | Nguyễn Trường Sơn (D)| Data + Evaluation | Thu thập luật, Chunking, RAGAS |
 
 ---
@@ -25,19 +25,19 @@ Hệ thống chatbot hỏi đáp pháp luật lao động, giúp người lao đ
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                  FRONTEND (React)                    │
-│         Login / Register / Chat / History            │
+│                  FRONTEND                           │
+│         Login / Register / Chat / History           │
 └──────────────────────┬──────────────────────────────┘
                        │ REST API (JSON)
 ┌──────────────────────▼──────────────────────────────┐
-│                  BACKEND (FastAPI)                   │
-│         Auth JWT │ Chat API │ History API            │
+│                  BACKEND (FastAPI)                  │
+│         Auth JWT │ Chat API │ History API           │
 └───────┬──────────────────────────┬──────────────────┘
         │                          │
 ┌───────▼──────────────────────────┐    ┌──────────▼──────────────────┐
-│  RAG Pipeline (LangChain)        │    │     Database (SQLite)        │
-│  1. Query Rewriting              │    │  users, conversations,       │
-│     (lịch sử hội thoại phiên)    │    │  messages                    │
+│  RAG Pipeline (LangChain)        │    │     Database (SQLite)       │
+│  1. Query Rewriting              │    │  users, conversations,      │
+│     (lịch sử hội thoại phiên)    │    │  messages                   │
 │  2. Parent Document Retrieval    │    └─────────────────────────────┘
 │     - Chunk con  → Chroma        │
 │       (text-embedding-3-small)   │
